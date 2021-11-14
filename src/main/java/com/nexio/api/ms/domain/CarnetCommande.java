@@ -71,6 +71,7 @@ public class CarnetCommande implements Serializable {
 	@JoinColumn(name = "produit_id",  nullable = false)
 	private Long produitId;
 	
+	@Transient
 	private Produit produit;
 
 	@ManyToOne(fetch = FetchType.LAZY)
