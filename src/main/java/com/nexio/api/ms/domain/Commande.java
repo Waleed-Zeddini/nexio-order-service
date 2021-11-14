@@ -47,7 +47,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@ApiModel(value="Commande",description="Commande crée par un Client ett possède des lignes commandes")
+@ApiModel(value="Commande",description="Commande crée par un Client et possède des lignes commandes")
 public class Commande implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
