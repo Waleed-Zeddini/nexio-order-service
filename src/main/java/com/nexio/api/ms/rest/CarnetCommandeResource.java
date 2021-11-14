@@ -48,8 +48,8 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 //@CrossOrigin(origins = "http://localhost:4200")
-//@Api(value="Order items management",tags="Order items")
-@ApiIgnore
+@Api(value="Order items management",tags="Order items")
+//@ApiIgnore
 public class CarnetCommandeResource {
 
     private final Logger log = LoggerFactory.getLogger(CarnetCommandeResource.class);

@@ -48,8 +48,8 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 //@CrossOrigin(origins = "http://localhost:4200")
-//@Api(value="Customer management",tags="Customer")
-@ApiIgnore
+@Api(value="Client management",tags="Client")
+//@ApiIgnore
 public class ClientResource {
 
     private final Logger log = LoggerFactory.getLogger(ClientResource.class);
