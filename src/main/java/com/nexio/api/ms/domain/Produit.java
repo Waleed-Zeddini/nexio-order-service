@@ -18,7 +18,7 @@ package com.nexio.api.ms.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +29,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@ApiModel(value="Produit",description="Produit est un bean non persistant, il appartient au deuxième MS,  il sert pour les lignes commandes")
 public class Produit implements Serializable {
 
     private static final long serialVersionUID = 1L;

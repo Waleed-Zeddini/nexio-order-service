@@ -27,6 +27,8 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -45,6 +47,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@ApiModel(value="Commande",description="Commande crée par un Client ett possède des lignes commandes")
 public class Commande implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

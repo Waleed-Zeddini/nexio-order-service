@@ -23,6 +23,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import io.swagger.annotations.ApiModel;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -41,6 +42,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@ApiModel(value="client",description="Client crée une commande avec ses lignes commandes")
 public class Client implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

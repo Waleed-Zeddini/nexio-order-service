@@ -27,6 +27,8 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -43,6 +45,7 @@ import lombok.ToString;
 //@NoArgsConstructor
 //@AllArgsConstructor
 //@ToString
+@ApiModel(value="LigneCommande",description="Ligne Commande")
 public class CarnetCommande implements Serializable {
 
     private static final long serialVersionUID = 1L;
