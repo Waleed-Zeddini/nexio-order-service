@@ -28,13 +28,9 @@ spring:
       connection-timeout: 60000
       maximum-pool-size: 30
     driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/ORDER_MS_DB
-#    username: zedgres
-#    password: zedgres
-    url: jdbc:postgresql://ec2-23-23-133-10.compute-1.amazonaws.com:5432/d61aqab0ugvfu5
-    username: hbarlipcwshnrb
-    password: 80cb21348f073f9c2e71f80fd43a817251b2b14138acbffa74772aac0fcbc8c6    
-    
+    url: jdbc:postgresql://localhost:5432/ORDER_MS_DB
+    username: zedgres
+    password: zedgres
   # JPA properties spring.jpa.hibernate.ddl-auto=update
   jpa:
     hibernate:
