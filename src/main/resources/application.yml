@@ -31,9 +31,9 @@ spring:
 #    url: jdbc:postgresql://localhost:5432/ORDER_MS_DB
 #    username: zedgres
 #    password: zedgres
-    url: jdbc:postgresql://ec2-52-204-72-14.compute-1.amazonaws.com:5432/dc3cvbck3v4hvo
-    username: ljdlsfgyaljrje
-    password: c7c75d23c40dfa564b87eb5844c16f7c86958192a72c205133c33f41a189b334    
+    url: jdbc:postgresql://ec2-54-145-49-132.compute-1.amazonaws.com:5432/d37okim5kebol9
+    username: nnvozusiefiqeu
+    password: 11ea82b0967823386a2c4ab6af11d37f5eddeeb0d55a696f0e65d634d5b79510    
     
   # JPA properties spring.jpa.hibernate.ddl-auto=update
   jpa:
