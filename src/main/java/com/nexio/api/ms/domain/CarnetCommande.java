@@ -45,7 +45,7 @@ import lombok.ToString;
 //@NoArgsConstructor
 //@AllArgsConstructor
 //@ToString
-@ApiModel(value="LigneCommande",description="Ligne Commande")
+@ApiModel(value="LigneCommande",description="Ligne Commande est géré par le client, elle contient les produits à commander")
 public class CarnetCommande implements Serializable {
 
     private static final long serialVersionUID = 1L;
