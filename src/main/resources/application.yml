@@ -15,7 +15,12 @@ spring:
     name: order-service
   zipkin:
     base-url: http://zipkin-server.ddns.net:9411/zipkin/
-    
+    # When enabled=false, traces log to the console. Comment to send to zipkin
+    enabled: true    
+  sleuth:
+    sampler:
+      probability: 1.0
+
 # Security configuration
 #  security:
 #    user:
@@ -29,12 +34,12 @@ spring:
       connection-timeout: 60000
       maximum-pool-size: 30
     driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/ORDER_MS_DB
-#    username: zedgres
-#    password: zedgres
-    url: jdbc:postgresql://ec2-52-204-72-14.compute-1.amazonaws.com:5432/d713a095k5u92v
-    username: pqjthuntoftqnr
-    password: f46a560f837a27fca076c5e3e085f1adb1c0dc7a1fdd905b7ba21e13b0288733
+    url: jdbc:postgresql://localhost:5432/ORDER_MS_DB
+    username: zedgres
+    password: zedgres
+#    url: jdbc:postgresql://ec2-52-204-72-14.compute-1.amazonaws.com:5432/d713a095k5u92v
+#    username: pqjthuntoftqnr
+#    password: f46a560f837a27fca076c5e3e085f1adb1c0dc7a1fdd905b7ba21e13b0288733
 
   jpa:
     hibernate:
@@ -54,7 +59,7 @@ logging:
      file: '%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n'
   level:
     root: INFO
-    org.springframework.web: ERROR
+    org.springframework.web: DEBUG
     org.hibernate: ERROR
 
 # Eureka Client setting    
