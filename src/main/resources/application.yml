@@ -15,6 +15,7 @@ spring:
     name: order-service
   zipkin:
     base-url: http://zipkin-server.ddns.net:9411/zipkin/
+    
 # Security configuration
 #  security:
 #    user:
@@ -60,8 +61,9 @@ logging:
 eureka:
   instance:
     hostname: localhost
+  client:
     serviceUrl:
-      defaultZone : http://${eureka.instance.hostname}:8761/eureka/  
+      defaultZone : https://nexio-register-erureka-server.herokuapp.com/eureka/ 
       
 # CF UAA setting  
 #uaa:
