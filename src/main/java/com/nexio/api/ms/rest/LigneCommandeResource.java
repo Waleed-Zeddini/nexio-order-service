@@ -10,7 +10,7 @@ package com.nexio.api.ms.rest;
  *
  * @author  Zeddini Walid
  * @version 1.0.0
- * @since   2021-11-08 
+ * @since   2021-11-12 
  */
 
 import com.nexio.api.ms.domain.LigneCommande;

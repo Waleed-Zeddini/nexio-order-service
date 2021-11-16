@@ -9,7 +9,7 @@ package com.nexio.api.ms.repository;
  *
  * @author  Zeddini Walid
  * @version 1.0.0
- * @since   2021-11-05 
+ * @since   2021-11-06 
  */
 
 import java.math.BigDecimal;
@@ -50,12 +50,16 @@ public List<Commande> findByEtatAndDateBetween(Long etatCommande,LocalDate dateD
 
 public List<Commande> findByPrixTotalAndDateBetween(BigDecimal prixTotal, LocalDate dateDebut, LocalDate dateFin);
 
-public List<Commande>  findByPrixTotalLessThan(BigDecimal prixTotal);
+public List<Commande>  findByPrixTotalLessThanOrderByDateDesc(BigDecimal prixTotal);
 
-public List<Commande>  findByPrixTotalGreaterThan(BigDecimal prixTotal);
+public List<Commande>  findByPrixTotalGreaterThanOrderByDateDesc(BigDecimal prixTotal);
 
 
+public List<Commande>  findByClientIdAndDateBetween(Long clientId, LocalDate dateDebut, LocalDate dateFin);
+public List<Commande>  findByClientId(Long clientId);
 
+public List<Commande> findByPrixTotalGreaterThanAndPrixTotalLessThanOrderByDateDesc(BigDecimal prixMin,
+		BigDecimal prixMax);
  
 /**
  * Finders
@@ -76,6 +80,10 @@ public List<Commande>  findByEtat(Long etatCommande);
 		    + " AND  c.date < ?3 "
 )	
 public List<Commande> findByEtatCdeAndPrixTotDateInf(Long etatCommande, BigDecimal prixTotal, LocalDate dateCommande);
+
+
+
+
 
 
 

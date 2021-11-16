@@ -50,10 +50,29 @@ public class CommandeDtoServiceImpl implements ICommandeDtoService {
     
     private final CommandeMapper commandeMapper;
     
-    @Autowired
-    private CircuitBreakerFactory<?, ?> circuitBreakerFactory;
+
     
-    private RestTemplate restTemplate = new RestTemplate();
+    /**
+     * Rest Template or Open feign ?
+     * In this class, we will consumming remote API Rest of Produit  with Rest Template !
+     * It's just to show the both ways
+     * 
+     * It's more easier to use Open feign specially with
+     * security configuration and Oauth2
+     * @param produitId
+     * @return Produit
+     * 
+     * Decomment for using Feign instad of RestTemplate: 
+     * getProduitByCde stockSericeClient
+     * 
+     */
+//    public Produit getProduitByCde(Long produitId){
+//    	return  stockSericeClient.getProduitById(produitId);
+    	
+        @Autowired
+        private CircuitBreakerFactory<?, ?> circuitBreakerFactory;
+        
+        private RestTemplate restTemplate = new RestTemplate();   	
 
 	@Autowired
 	public CommandeDtoServiceImpl (CommandeRepository commandeRepository, ClientRepository clientRepository,

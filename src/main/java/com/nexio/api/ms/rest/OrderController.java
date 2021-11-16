@@ -9,7 +9,7 @@ package com.nexio.api.ms.rest;
  *
  * @author  Zeddini Walid
  * @version 1.0.0
- * @since   2021-11-05 
+ * @since   2021-11-10 
  */
 
 import com.nexio.api.ms.dto.OrderDTO;
@@ -18,23 +18,23 @@ import com.nexio.api.ms.service.IOrderService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
-
-
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +48,7 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 //@CrossOrigin(origins = "http://localhost:4200")
-@Api(value="Order management",tags="Order Microservice",description ="The main Microservice")
+@Api(value="Order management",tags="Microservice - Order",description ="The main Microservice")
 public class OrderController {
 
     private final Logger log = LoggerFactory.getLogger(OrderController.class);
@@ -108,13 +108,178 @@ public class OrderController {
         return ResponseEntity.ok().body(page.getContent());
     }
     
-    
+    /**
+     * {@code GET  /orders} : get all the orders.
+     *
+     * @param.
+     * @return the the List of Orders with status {@code 200 (OK)} and the list of orders in body.
+     */ 
     @GetMapping("/orders/all")
-    @ApiOperation(value = "Get all the orders - list")
+    @ApiOperation(value = "Get all the orders - List")
     public  List<OrderDTO> getAllOrders() {
         log.debug("REST request to get all Orders");
         return orderService.findAll();
     }
+    
+    /**
+     * {@code GET  /orders} : get all the orders of a client by his id.
+     *
+	 * @param clientId
+     * @return the List of Orders with status {@code 200 (OK)} and the list of orders in body.
+     */ 
+    @GetMapping("/orders/all-commandes/client/id")
+    @ApiOperation(value = "Get all the orders of a client by his id")
+	public List<OrderDTO> getOrderDTOByClientId(
+		    @ApiParam(
+		    	    name =  "clientId",
+		    	    value = "ID Client",
+		    	    example = "1",
+		    	    required = true)
+			@RequestParam Long clientId) {
+    	
+    	 log.debug("REST request to get of a client by id");
+  
+	return orderService.getAllOrderByClientId(clientId);
+	
+	}
+    
+    /**
+     * {@code GET  /orders} : get all the orders of a client, between two dates, by his id.
+     *
+	 * @param clientId
+	 * @param dateDebut
+	 * @param dateFin
+     * @return the List of Orders with status {@code 200 (OK)} and the list of orders in body.
+     */ 
+    @GetMapping("/orders/all-commandes/client/between-dates")
+    @ApiOperation(value = "Get all the orders of a client between two dates (Format Date must be : yyyy-MM-dd)")
+
+	public List<OrderDTO> getOrderDTOByClientIdAndDateValeurBetween(
+			@RequestParam Long clientId,
+		    @ApiParam(
+		    	    name =  "dateDebut",
+		    	    value = "Date Début",
+		    	    example = "2020-01-01",
+		    	    required = true)
+			@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateDebut,
+			
+		    @ApiParam(
+		    	    name =  "dateFin",
+		    	    value = "Date Fin",
+		    	    example = "2021-12-31",
+		    	    required = true)
+			@DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate dateFin) {
+    	
+    	 log.debug("REST request to orders  get of a client between two dates.");
+  
+	return orderService.getAllOrderByClientIdAndDateValeurBetween(clientId, dateDebut, dateFin);
+	
+	}
+    
+    /**
+     * {@code GET  /orders} : get all the orders between two dates.
+     *
+	 * @param dateDebut
+	 * @param dateFin
+     * @return the List of Orders with status {@code 200 (OK)} and the list of orders in body.
+     */ 
+    @GetMapping("/orders/all-commandes/between-dates")
+    @ApiOperation(value = "Get all the orders between two dates (Format Date must be : yyyy-MM-dd)")
+	public List<OrderDTO> getOrderDTOByDateBetween(
+		    @ApiParam(
+		    	    name =  "dateDebut",
+		    	    value = "Date Début",
+		    	    example = "2020-01-01",
+		    	    required = true)
+			@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateDebut,
+			
+		    @ApiParam(
+		    	    name =  "dateFin",
+		    	    value = "Date Fin",
+		    	    example = "2021-12-31",
+		    	    required = true)
+			@DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate dateFin) {
+    	
+    	 log.debug("REST request to get orders between two dates.");
+  
+	return orderService.getAllOrderByDateBetween(dateDebut, dateFin);
+	
+	}
+    
+    /**
+     * {@code GET  /orders} : get all the orders by PrixTotal GreaterThan.
+     *
+	 * @param prixTotal
+     * @return the List of Orders with status {@code 200 (OK)} and the list of orders in body.
+     */ 
+    @GetMapping("/orders/all-commandes/prix-greater-than")
+    @ApiOperation(value = "Get all the orders that price is greater than the price entred")
+	public List<OrderDTO> getOrderDTOByByPrixTotalGreaterThan(
+		    @ApiParam(
+		    	    name =  "prixTotal",
+		    	    value = "Prix Total Cde",
+		    	    example = "100",
+		    	    required = true)
+			BigDecimal prixTotal) {
+    	
+    log.debug("REST request to get all the orders that its price greater than the price entred");
+    
+  	return orderService.getAllOrderByPrixTotalGreaterThan(prixTotal);
+	
+	}
+    
+    /**
+     * {@code GET  /orders} : get all the orders by PrixTotal less.
+     *
+	 * @param prixTotal
+     * @return the List of Orders with status {@code 200 (OK)} and the list of orders in body.
+     */ 
+    @GetMapping("/orders/all-commandes/prix-less-than")
+    @ApiOperation(value = "Get all the orders that price is less than the price entred")
+	public List<OrderDTO> getOrderDTOByPrixTotalLess(
+		    @ApiParam(
+		    	    name =  "prixTotal",
+		    	    value = "Prix Total Cde",
+		    	    example = "100",
+		    	    required = true)
+			BigDecimal prixTotal) {
+    	
+    log.debug("REST request to get all the orders that its price less than the price entred");
+    
+  	return orderService.getAllOrderByPrixTotalLess(prixTotal);
+	
+	}
+  
+    /**
+     * {@code GET  /orders} : get all the orders by PrixTotal is between Min and Max.
+     *
+	 * @param prixMin
+	 * @param prixMax
+     * @return the List of Orders with status {@code 200 (OK)} and the list of orders in body.
+     */ 
+    @GetMapping("/orders/all-commandes/prix-between")
+    @ApiOperation(value = "Get all the orders that price is between Min and Max")
+	public List<OrderDTO> getOrderDTOByByPrixTotalGreaterThan(
+			@ApiParam(
+		    	    name =  "prixMin",
+		    	    value = "Prix Min",
+		    	    example = "10",
+		    	    required = true)
+			BigDecimal prixMin, 
+			
+			@ApiParam(
+		    	    name =  "prixMax",
+		    	    value = "Prix Max",
+		    	    type= "number",
+		    	    example = "100000",
+		    	    required = true)
+			BigDecimal prixMax) {
+    	
+    log.debug("REST request to get all the orders that its price is between Min and Max");
+    
+  	return orderService.getAllOrderByPrixTotalBetween(prixMin, prixMax);
+	
+	}
 
     /**
      * {@code GET  /orders/:id} : get the "id" order.
@@ -125,7 +290,13 @@ public class OrderController {
     
     @GetMapping("/orders/{id}")
     @ApiOperation(value = "Get Order by id")
-    public ResponseEntity<OrderDTO> getOrder(@PathVariable Long id) {
+    public ResponseEntity<OrderDTO> getOrder(
+			@ApiParam(
+		    	    name =  "id",
+		    	    value = "ID",
+		    	    example = "53",
+		    	    required = true)
+    		@PathVariable Long id) {
         log.debug("REST request to get Order : {}", id);
         Optional<OrderDTO> order = orderService.findOne(id);
         return ResponseEntity.ok().body(order.get());
@@ -141,9 +312,16 @@ public class OrderController {
 
     @ApiOperation(value = "Delete Order by id")
     @DeleteMapping("/orders/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteOrder(
+			@ApiParam(
+		    	    value = "ID",
+		    	    example = "53",
+		    	    required = true)
+    		@PathVariable Long id) {
         log.debug("REST request to delete Order : {}", id);
+        
         orderService.delete(id);
+        
         return ResponseEntity.noContent().build();
     }
 }
