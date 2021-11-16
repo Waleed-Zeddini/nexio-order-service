@@ -54,36 +54,38 @@
 <!-- 
 *
 *
-Decomment it to enable Eureka client
+Comment/Decomment it to enable Eureka client
 *
 *
 -->
-<!-- 		<dependency> -->
-<!--             <groupId>org.springframework.cloud</groupId> -->
-<!--             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId> -->
-<!--         </dependency> -->
+
+		<dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
 
 <!-- 
 *
 *
-Decomment it to enable Zipkin
+Comment/Decomment to enable/disable Zipkin
 *
 *
 -->
-<!-- 	<dependency> -->
-<!-- 		<groupId>org.springframework.cloud</groupId> -->
-<!-- 		<artifactId>spring-cloud-sleuth-zipkin</artifactId> -->
-<!-- 	</dependency> -->
 
-<!-- 	<dependency> -->
-<!-- 		<groupId>org.springframework.cloud</groupId> -->
-<!-- 		<artifactId>spring-cloud-starter-sleuth</artifactId> -->
-<!-- 	</dependency>        -->
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-sleuth</artifactId>
+	</dependency>       
 
 <!-- 
 *
 *
-Decomment it to enable OAuth2
+Comment/Decomment to enable/disable OAuth2
 *
 *
 -->	 
@@ -96,7 +98,7 @@ Decomment it to enable OAuth2
 <!-- 
 *
 *
-Decomment it to enable Keycloak
+Comment/Decomment to enable/disable Keycloak
 *
 *
 -->	 

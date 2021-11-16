@@ -48,7 +48,7 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 //@CrossOrigin(origins = "http://localhost:4200")
-@Api(value="Order items management",tags="REST - LigneCommande" ,description ="LigneCommande management")
+@Api(value="Order items management",tags="REST - LigneCommande" ,description ="LigneCommande Resource")
 //@ApiIgnore
 public class LigneCommandeResource {
 

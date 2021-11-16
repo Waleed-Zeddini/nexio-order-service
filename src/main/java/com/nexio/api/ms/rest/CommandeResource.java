@@ -42,7 +42,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 //@CrossOrigin(origins = "http://localhost:4200")
-@Api(value="Commande management",tags="REST - Commande",description ="Commande management")
+@Api(value="Commande management",tags="REST - Commande",description ="Commande Resource")
 //@ApiIgnore
 public class CommandeResource {
 
