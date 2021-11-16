@@ -15,26 +15,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import com.nexio.api.ms.dto.CommandeDTO;
+
 import com.nexio.api.ms.dto.mapper.CommandeMapper;
+import com.nexio.api.ms.openfeign.client.StockSericeClient;
 import com.nexio.api.ms.config.Constants;
-import com.nexio.api.ms.domain.CarnetCommande;
-import com.nexio.api.ms.domain.Client;
 import com.nexio.api.ms.domain.Commande;
-import com.nexio.api.ms.domain.Produit;
+import com.nexio.api.ms.domain.LigneCommande;
 import com.nexio.api.ms.dto.OrderDTO;
+import com.nexio.api.ms.domain.Produit;
 
 import com.nexio.api.ms.repository.ClientRepository;
 import com.nexio.api.ms.repository.CommandeRepository;
-import com.nexio.api.ms.repository.CarnetCommandeRepository;
+import com.nexio.api.ms.repository.LigneCommandeRepository;
 
 /**
  * Service Implementation for implementing methods declared in Interface linked to {@link OrderDTO}.
@@ -43,27 +40,32 @@ import com.nexio.api.ms.repository.CarnetCommandeRepository;
 @Transactional
 public class OrderServiceImpl implements IOrderService {
 
-    private final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(CommandeDtoServiceImpl.class);
 
     private final ClientRepository clientRepository;
     private final CommandeRepository commandeRepository;
-    private final CarnetCommandeRepository carnetCommandeRepository;
+    private final LigneCommandeRepository ligneCommandeRepository;
     
-    private final CommandeMapper commandeMapper;
+    private final StockSericeClient stockSericeClient;
     
-    @Autowired
-    private CircuitBreakerFactory circuitBreakerFactory;
-    
-    private RestTemplate restTemplate = new RestTemplate();
+    /**
+     * Decomment if we would like to 
+     * use RestTemplate instaed of OpenFeign
+     * @param stockSericeClient 
+     */
+//    @Autowired
+//    private CircuitBreakerFactory<?, ?> circuitBreakerFactory;
+//    
+//    private RestTemplate restTemplate = new RestTemplate();
 
 	@Autowired
 	public OrderServiceImpl (CommandeRepository commandeRepository, ClientRepository clientRepository,
-			CarnetCommandeRepository carnetCommandeRepository, CommandeMapper commandeMapper) {
+			LigneCommandeRepository ligneCommandeRepository, CommandeMapper commandeMapper, StockSericeClient stockSericeClient) {
 		this.commandeRepository = commandeRepository;
 		this.clientRepository = clientRepository;
-		this.carnetCommandeRepository = carnetCommandeRepository;
+		this.ligneCommandeRepository = ligneCommandeRepository;
+		this.stockSericeClient = stockSericeClient;
 		
-		this.commandeMapper = commandeMapper;
 
 	}
 
@@ -83,37 +85,20 @@ public class OrderServiceImpl implements IOrderService {
 	     * @return the persisted entity.
 	     */
 			 
-	    public Commande save(Commande commande) {
-	        log.debug("Request to save CommandeDTO : {}", commande);
-	        
-	       
- 	       
-	        if(commande!=null) {
+	    public OrderDTO save(OrderDTO order) {
+	        log.debug("Request to save Order : {}", order);
 
-
-	        setClientFakeOrder(commande); // NOTA : just for test without View(Frontend), in order to avoid exception
-	        
-	        commande = commandeRepository.save(commande);
-	        
-	        if(commande.getId()!=null) {
-	        	for (CarnetCommande ligneCde : commande.getCarnets()) {
-	        		ligneCde.setCommande(commande);
-	        		
-	        		if(ligneCde.getPrixUnitaire()==null) { // NOTA : To test without View (Frontend), in order to avoid exception
-	        		ligneCde.setEtat(new Long(1));
-	        		ligneCde.setPrixUnitaire(new BigDecimal(10));
-	        		ligneCde.setPrixTotal(new BigDecimal(10));
-	        		ligneCde.setQte(new Long(1));
-	        		}
-	        		
-	        		ligneCde = carnetCommandeRepository.save(ligneCde);
+			if (clientRepository.existsById(order.getCommande().getClientId())) {
+				
+				order.setCommande(commandeRepository.save(order.getCommande()));
+				
+				for (LigneCommande ligneCde : order.getLigneCommande()) {
+					ligneCde.setCommande(order.getCommande());
+					ligneCde = ligneCommandeRepository.save(ligneCde);
 				}
-	        	
- 	        }
-
-	    } 
-	        return commande;
-	    }
+			}
+			return order;
+		}
 
     /**
      * Get all the orders.
@@ -122,76 +107,102 @@ public class OrderServiceImpl implements IOrderService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<Commande> findAll(Pageable pageable) {
+    public Page<OrderDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Orders");
    
-        Page<Commande> commandes = commandeRepository.findAll(pageable);
-        
-         	
+        List<Commande> commandes = commandeRepository.findAll();
+        List<OrderDTO> orders = new ArrayList<OrderDTO>();
+        		
         	for (Commande commande : commandes) {
         		
-        		if (commande != null) {
-        			CommandeDTO orderDTO = commandeMapper.orderToCommandeDTO(commande);
-        			
-    	            Set<CarnetCommande> carnets = orderDTO.getCarnets().stream()
-    	                .map(carnetCommandeRepository::findById)
-    	                .filter(Optional::isPresent)
-    	                .map(Optional::get)
-    	                .collect(Collectors.toSet());
-    	            
-    	            for (Iterator<CarnetCommande> iterator = carnets.iterator(); iterator.hasNext();) {
-   						CarnetCommande carnetCommande = (CarnetCommande) iterator.next();
-   			        	carnetCommande.setProduit((getProduitByCde(carnetCommande.getProduitId())));
-	   		   }
-    	            
-    	            commande.setCarnets(carnets);
+        		List<LigneCommande> lignesCde = new ArrayList<LigneCommande>();
+        		OrderDTO order = new OrderDTO(); 
+        		
+        		order.setCommande(commande);
+        		
+        		lignesCde = ligneCommandeRepository.findByCommandeId(order.getCommande().getId());
+        		
+        		for (Iterator<LigneCommande> iterator = lignesCde.iterator(); iterator.hasNext();) {
+  						LigneCommande oneLigneCde = (LigneCommande) iterator.next();
+  						
+  						/**
+  		        		 * getProduitByCde : Invoking API Rest of Produit by Rest template
+  		        		 * We use other exemple with Feign Client
+  		        		 */
+  			        	oneLigneCde.setProduit((getProduitByCde(oneLigneCde.getProduitId())));
+        		}
+        		   
+        		order.setLigneCommande(lignesCde);
+        		order.setClient(clientRepository.getById(order.getCommande().getClientId())); 
+        		orders.add(order);
+
     	        }
-			}
         	
       
-        	Page<Commande> pageOrders = new PageImpl<Commande>(commandes.getContent(), pageable, Integer.valueOf(commandes.getSize()).longValue());
+        	Page<OrderDTO> pageOrders = new PageImpl<OrderDTO>(orders, pageable, Integer.valueOf(orders.size()).longValue());
         
         return pageOrders;
     }
 
 
     @Transactional(readOnly = true)
-    public List<Commande> findAll() {
+    public List<OrderDTO> findAll() {
         log.debug("Request to get all Orders");
    
         List<Commande> commandes = commandeRepository.findAll();
-        
-         	
+        List<OrderDTO> orders = new ArrayList<OrderDTO>();
+        List<LigneCommande> orderItems = new ArrayList<LigneCommande>();
+        OrderDTO order = new OrderDTO(); 
+
         	for (Commande commande : commandes) {
         		
-        		if (commande != null) {
-        			CommandeDTO orderDTO = commandeMapper.orderToCommandeDTO(commande);
-        			
-    	            Set<CarnetCommande> carnets = orderDTO.getCarnets().stream()
-    	                .map(carnetCommandeRepository::findById)
-    	                .filter(Optional::isPresent)
-    	                .map(Optional::get)
-    	                .collect(Collectors.toSet());
-    	            
-    	           	
-    	            for (Iterator<CarnetCommande> iterator = carnets.iterator(); iterator.hasNext();) {
-    	   						CarnetCommande carnetCommande = (CarnetCommande) iterator.next();
-    	   			        	carnetCommande.setProduit((getProduitByCde(carnetCommande.getProduitId())));
-    	   		   }
-    	            
-    	            commande.setCarnets(carnets);
+        		List<LigneCommande> lignesCde = new ArrayList<LigneCommande>();
+        		
+        		order.setCommande(commande);
+        		
+        		lignesCde = ligneCommandeRepository.findByCommandeId(order.getCommande().getId());
+        		
+        		
+        		for (Iterator<LigneCommande> iterator = lignesCde.iterator(); iterator.hasNext();) {
+  						LigneCommande oneLigneCde = (LigneCommande) iterator.next();
+  						
+  						/**
+  		        		 * getProduitByCde : Invoking API Rest of Produit by Rest template
+  		        		 * We use other exemple with Feign Client
+  		        		 */
+  			        	oneLigneCde.setProduit((getProduitByCde(oneLigneCde.getProduitId())));
+  			        	
+  			        	orderItems.add(oneLigneCde);
+        		}
+        		   
+        		order.setLigneCommande(orderItems);
+        		order.setClient(clientRepository.getById(order.getCommande().getClientId())); 
+        		orders.add(order);
+
     	        }
-			}
-         return commandes;
+
+         return orders;
     }
 
+    /**
+     * Consumming API Rest of Produit with Rest Template
+     * It's more easier to use Open feign specially with
+     * security configuration and Oauth2
+     * @param produitId
+     * @return Produit
+     * 
+     */
     public Produit getProduitByCde(Long produitId){
-    	Produit produit = circuitBreakerFactory.create("produit-details").run(()->{
-                    ResponseEntity<Produit> produitEntity = restTemplate.exchange(Constants.PRODUIT_API_URL + produitId, HttpMethod.GET,null,new ParameterizedTypeReference<Produit>(){});
-                    return produitEntity.getBody();
-                }, throwable -> new Produit()
-        );
-        return produit;
+    	return  stockSericeClient.getProduitById(produitId);
+    /*
+     * Decomment for using RestTemplate instad of Feign 	
+     */
+//    	Produit produit = circuitBreakerFactory.create("produit-details").run(()->{
+//                    ResponseEntity<Produit> produitEntity = restTemplate.exchange(Constants.PRODUIT_API_URL + produitId, HttpMethod.GET,null,new ParameterizedTypeReference<Produit>(){});
+//                    return produitEntity.getBody();
+//                }, throwable -> new Produit()
+//        );
+//        return produit;
     }
 
     /**
@@ -201,39 +212,29 @@ public class OrderServiceImpl implements IOrderService {
      * @return the entity.
      */
     @Transactional(readOnly = true)
-    public Optional<Commande> findOne(Long id) {
-        log.debug("Request to get CommandeDTO : {}", id);
-         
-        Commande commande = new Commande();
-      
+    public Optional<OrderDTO> findOne(Long id) {
+        log.debug("Request to get Order : {}", id);
+        
+        OrderDTO order = new OrderDTO();
+        
         if(commandeRepository.existsById(id))
         {
-        commande = commandeRepository.getById(id);
- 	        	
-		CommandeDTO orderDTO = commandeMapper.orderToCommandeDTO(commande);
-		
-        Set<CarnetCommande> carnets = orderDTO.getCarnets().stream()
-            .map(carnetCommandeRepository::findById)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(Collectors.toSet());
         
-        for (Iterator<CarnetCommande> iterator = carnets.iterator(); iterator.hasNext();) {
-			CarnetCommande carnetCommande = (CarnetCommande) iterator.next();
-	        	carnetCommande.setProduit((getProduitByCde(carnetCommande.getProduitId())));
-		   }
+        	
+        order.setCommande(commandeRepository.getById(id));  
+        order.setLigneCommande(ligneCommandeRepository.findByCommandeId(order.getCommande().getId()));
         
-        commande.setCarnets(carnets);
-	       
-        } 
+        order.setClient(clientRepository.getById(order.getCommande().getClientId()));  
+        }
+       
         
-        return Optional.ofNullable(commande) ;
+        return Optional.ofNullable(order) ;
     }
     
   
 
     /**
-     * Delete the order by id: Commande and its children : CarnetCommande
+     * Delete the order by id: Order and its children : LigneCommande
      * 
      * @param id the id of the entity.
      * 
@@ -242,41 +243,24 @@ public class OrderServiceImpl implements IOrderService {
      * AFTER THAT DELETE EVERY EXISTED ONE
      */
     public void delete(Long id) {
-        log.debug("Request to delete CommandeDTO : {}", id);
+        log.debug("Request to delete Order : {}", id);
         
-        Commande commande = new Commande();
+        OrderDTO order = new OrderDTO();
         
         if(commandeRepository.existsById(id))
         {
-        commande = commandeRepository.getById(id);
+        order.setCommande(commandeRepository.getById(id));
         
-		CommandeDTO orderDTO = commandeMapper.orderToCommandeDTO(commande);
-			
-            Set<CarnetCommande> carnets = orderDTO.getCarnets().stream()
-                .map(carnetCommandeRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
+        List<LigneCommande> lignes = ligneCommandeRepository.findByCommandeId(order.getCommande().getId());
             
-            for (Iterator<CarnetCommande> iterator = carnets.iterator(); iterator.hasNext();) {
-					CarnetCommande carnetCommande = (CarnetCommande) iterator.next();
-					carnetCommandeRepository.deleteById(carnetCommande.getId());
-		   }
+        for (Iterator<LigneCommande> iterator = lignes.iterator(); iterator.hasNext();) {
+				LigneCommande lCommande = (LigneCommande) iterator.next();
+				ligneCommandeRepository.deleteById(lCommande.getId());
+	   }
             
-            commandeRepository.deleteById(id);
+       commandeRepository.deleteById(id);
         }
     }
     
-    /**
-     * fake Data for client and Etat
-     * in order to insert Order in DB
-     * @return
-     */
-    Commande setClientFakeOrder(Commande commande) {
-		Client client = new Client();
-		client.setId(new Long(1)); // Client exists in DB
-		commande.setClient(client);
-		commande.setEtat(new Long(1));
-		return commande;
-	}
+
 }

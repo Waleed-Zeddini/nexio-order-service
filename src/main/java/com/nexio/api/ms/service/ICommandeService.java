@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.nexio.api.ms.domain.Commande;
+import com.nexio.api.ms.domain.LigneCommande;
 /**
  * Interface for managing methods linked to {@link Commande}.
  */
@@ -31,6 +32,8 @@ public interface ICommandeService {
 	Optional<Commande> findOne(Long id);
 	
 	void delete(Long id);
+
+	List<LigneCommande> getLigneByCommandeId(Long commandeId);
 
    
 }

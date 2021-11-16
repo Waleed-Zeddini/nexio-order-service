@@ -13,19 +13,17 @@ package com.nexio.api.ms.domain;
  */
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModel;
 
@@ -47,7 +45,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@ApiModel(value="Commande",description="Commande crée par un Client et possède des lignes commandes")
+@ApiModel(value="Model - Commande",description="Commande est gérée par un Client. Elle possède des lignes commandes")
 public class Commande implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -74,11 +72,33 @@ public class Commande implements Serializable {
 	    @Column(name = "etat", nullable = false)
 	    private Long etat;
 
-		@OneToMany(fetch = FetchType.LAZY, mappedBy = "commande", orphanRemoval = true)
-	    private Set<CarnetCommande> carnets = new HashSet<>();
+	    @NotNull
+		@Column(name = "client_id",  nullable = false)
+	    private Long clientId;
 
-		@ManyToOne(fetch = FetchType.LAZY)
-		@JoinColumn(name = "client_id",  nullable = false)
-	    @JsonIgnoreProperties(value = "commandes", allowSetters = true)
+		
+	    @JsonIgnore
+	    @Transient
 	    private Client client;
+		
+		
+	    @JsonIgnore
+	    @Transient
+	    private Set<LigneCommande> ligneCommandes = new HashSet<>();
+		
+	    
+	    /**
+	     * In the case of Monolithic Application with 
+	     * a relational DB containing entities of the Application in the same DB , 
+	     * we can define OneToMany and  ManyToMany relations between 
+	     * persistent entities.
+	     * 
+	     * In Microservices, it's recommended to discuss and implement
+	     * in Service Classes
+	     */    
+//		@ManyToOne(fetch = FetchType.LAZY)
+//		@JoinColumn(name = "client_id",  nullable = false)
+	    
+//		@OneToMany(fetch = FetchType.LAZY, mappedBy = "commande", orphanRemoval = true)
+
 }

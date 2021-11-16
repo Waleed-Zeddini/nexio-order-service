@@ -17,20 +17,27 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.nexio.api.ms.domain.CarnetCommande;
+import com.nexio.api.ms.domain.LigneCommande;
+import com.nexio.api.ms.domain.Produit;
 /**
- * Interface for managing methods linked to {@link CarnetCommande}.
+ * Interface for managing methods linked to {@link LigneCommande}.
  */
-public interface ICarnetCommandeService {
+public interface ILigneCommandeService {
 
 	
-	CarnetCommande save(CarnetCommande produit);
+	LigneCommande save(LigneCommande produit);
 	 
-	Page<CarnetCommande> findAll(Pageable pageable);
+	Page<LigneCommande> findAll(Pageable pageable);
 	
-	Optional<CarnetCommande> findOne(Long id);
+	List<LigneCommande> findAll();
+	
+	Optional<LigneCommande> findOne(Long id);
 	
 	void delete(Long id);
+	
+	List<Produit> getProduits();
+
+	Produit getProduitById(Long id);
 
    
 }

@@ -12,7 +12,11 @@ package com.nexio.api.ms.service;
  * @since   2021-11-07 
  */
 import com.nexio.api.ms.domain.Commande;
+import com.nexio.api.ms.domain.LigneCommande;
+import com.nexio.api.ms.repository.ClientRepository;
 import com.nexio.api.ms.repository.CommandeRepository;
+import com.nexio.api.ms.repository.LigneCommandeRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +25,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+
 
 /**
  * Service Implementation for implementing methods declared in Interface linked to  {@link Commande}.
@@ -33,9 +40,15 @@ public class CommandeServiceImpl implements ICommandeService {
     private final Logger log = LoggerFactory.getLogger(CommandeServiceImpl.class);
 
     private final CommandeRepository commandeRepository;
+    private final LigneCommandeRepository ligneCommandeRepository;
+    private final ClientRepository clientRepository;
 
-    public CommandeServiceImpl(CommandeRepository commandeRepository) {
+    public CommandeServiceImpl(CommandeRepository commandeRepository,
+    		LigneCommandeRepository ligneCommandeRepository,
+    		ClientRepository clientRepository) {
         this.commandeRepository = commandeRepository;
+        this.ligneCommandeRepository = ligneCommandeRepository;
+        this.clientRepository = clientRepository;  
     }
 
     /**
@@ -46,7 +59,24 @@ public class CommandeServiceImpl implements ICommandeService {
      */
     public Commande save(Commande commande) {
         log.debug("Request to save Commande : {}", commande);
-        return commandeRepository.save(commande);
+        
+        
+        if(commande.getClient()!=null) {
+        	clientRepository.save(commande.getClient());
+        }
+        if(!commande.getLigneCommandes().isEmpty()) {
+        	
+            commande = commandeRepository.save(commande);
+
+        	for (Iterator<LigneCommande> iterator = commande.getLigneCommandes().iterator(); iterator.hasNext();) {
+				LigneCommande ligneCommande = (LigneCommande) iterator.next();
+				ligneCommande.setCommande(commande);
+	        	ligneCommandeRepository.save(ligneCommande);
+			}
+        }else {
+        commande = commandeRepository.save(commande);
+        }
+        return commande;
     }
 
     /**
@@ -79,8 +109,22 @@ public class CommandeServiceImpl implements ICommandeService {
      *
      * @param id the id of the entity.
      */
-    public void delete(Long id) {
-        log.debug("Request to delete Commande : {}", id);
-        commandeRepository.deleteById(id);
-    }
+ 
+    
+	public void delete(Long id) {
+		log.debug("Request to delete Categorie : {}", id);
+
+		List<LigneCommande> ligneCommandes = getLigneByCommandeId(id);
+
+		for (LigneCommande lc : ligneCommandes) {
+	        commandeRepository.deleteById(lc.getCommandeId());
+		}
+
+		commandeRepository.deleteById(id);
+	}
+
+	@Override
+	public List<LigneCommande> getLigneByCommandeId(Long commandeId) {
+		return ligneCommandeRepository.findByCommandeId(commandeId);
+	}
 }

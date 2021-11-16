@@ -23,6 +23,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.nexio.api.ms.domain.Commande;
+import com.nexio.api.ms.domain.LigneCommande;
 
 /**
  * Spring Data  repository for the Commande entity.
@@ -54,6 +55,7 @@ public List<Commande>  findByPrixTotalLessThan(BigDecimal prixTotal);
 public List<Commande>  findByPrixTotalGreaterThan(BigDecimal prixTotal);
 
 
+
  
 /**
  * Finders
@@ -74,6 +76,7 @@ public List<Commande>  findByEtat(Long etatCommande);
 		    + " AND  c.date < ?3 "
 )	
 public List<Commande> findByEtatCdeAndPrixTotDateInf(Long etatCommande, BigDecimal prixTotal, LocalDate dateCommande);
+
 
 
 

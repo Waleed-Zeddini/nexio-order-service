@@ -1,8 +1,8 @@
-package com.nexio.api.ms.dto;
+package com.nexio.api.ms.dto.mapper;
 
 import com.nexio.api.ms.config.Constants;
 
-import com.nexio.api.ms.domain.CarnetCommande;
+import com.nexio.api.ms.domain.LigneCommande;
 import com.nexio.api.ms.domain.Client;
 import com.nexio.api.ms.domain.Commande;
 
@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * A DTO representing a commande, with his carnetCommandes.
+ * A DTO representing a Commande, with its LigneCommandes.
  */
 public class CommandeDTO {
 
@@ -54,8 +54,8 @@ public class CommandeDTO {
         this.etat = commande.getEtat();
         this.client = commande.getClient();
  
-        this.carnets = commande.getCarnets().stream()
-            .map(CarnetCommande::getId)
+        this.carnets = commande.getLigneCommandes().stream()
+            .map(LigneCommande::getId)
             .collect(Collectors.toSet());
     }
 

@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -83,4 +84,14 @@ public class ClientServiceImpl implements IClientService {
         log.debug("Request to delete Client : {}", id);
         clientRepository.deleteById(id);
     }
+
+    /**
+     * Get all the clients.
+     *
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+	public List<Client> findAll() {
+		return clientRepository.findAll();
+	}
 }

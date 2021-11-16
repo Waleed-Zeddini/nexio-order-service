@@ -13,19 +13,16 @@ package com.nexio.api.ms.domain;
  */
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModel;
 
@@ -40,13 +37,13 @@ import lombok.ToString;
 
 
 @Entity
-@Table(name = "carnet_commande")
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@ToString
-@ApiModel(value="LigneCommande",description="Ligne Commande est géré par le client, elle contient les produits à commander")
-public class CarnetCommande implements Serializable {
+@Table(name = "ligne_commande")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@ApiModel(value="Model - LigneCommande",description="Ligne Commande appartient à une Commande. Elle est géré par le Client, et contient les produits à commander veant d'un autre Microservice")
+public class LigneCommande implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -74,77 +71,32 @@ public class CarnetCommande implements Serializable {
 	@JoinColumn(name = "produit_id",  nullable = false)
 	private Long produitId;
 	
-	@Transient
+	
+	 @Column(name = "commande_id", nullable = false)
+	 private Long commandeId;
+	 
+	
 	private Produit produit;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "commande_id",  nullable = false)
-    @JsonIgnoreProperties(value = "carnets", allowSetters = true)
+	
+	@Transient
+    @JsonIgnore
     private Commande commande;
+	
+    /**
+     * In the case of Monolithic Application with 
+     * a relational DB containing entities of the Application in the same DB , 
+     * we can define OneToMany and  ManyToMany relations between 
+     * persistent entities.
+     * 
+     * In Microservices, it's recommended to discuss and implement
+     * in Service Classes
+     */    
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "commande_id",  nullable = false)
+	
 
-	public Long getId() {
-		return id;
-	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getQte() {
-		return qte;
-	}
-
-	public void setQte(Long qte) {
-		this.qte = qte;
-	}
-
-	public BigDecimal getPrixUnitaire() {
-		return prixUnitaire;
-	}
-
-	public void setPrixUnitaire(BigDecimal prixUnitaire) {
-		this.prixUnitaire = prixUnitaire;
-	}
-
-	public BigDecimal getPrixTotal() {
-		return prixTotal;
-	}
-
-	public void setPrixTotal(BigDecimal prixTotal) {
-		this.prixTotal = prixTotal;
-	}
-
-	public Long getEtat() {
-		return etat;
-	}
-
-	public void setEtat(Long etat) {
-		this.etat = etat;
-	}
-
-	public Produit getProduit() {
-		return produit;
-	}
-
-	public void setProduit(Produit produit) {
-		this.produit = produit;
-	}
-
-	public Commande getCommande() {
-		return commande;
-	}
-
-	public void setCommande(Commande commande) {
-		this.commande = commande;
-	}
-
-	public Long getProduitId() {
-		return produitId;
-	}
-
-	public void setProduitId(Long produitId) {
-		this.produitId = produitId;
-	}
+	
 	
 	
 }

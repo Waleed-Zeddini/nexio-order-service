@@ -28,6 +28,8 @@ public interface IClientService {
 	 
 	Page<Client> findAll(Pageable pageable);
 	
+	List<Client> findAll();
+	
 	Optional<Client> findOne(Long id);
 	
 	void delete(Long id);

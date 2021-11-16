@@ -13,8 +13,8 @@ info:
 spring:
   application:
     name: order-service
-#  zipkin:
-#    base-url: http://localhost:9411/
+  zipkin:
+    base-url: http://zipkin-server.ddns.net:9411/zipkin/
 # Security configuration
 #  security:
 #    user:
@@ -34,7 +34,7 @@ spring:
     url: jdbc:postgresql://ec2-52-54-237-144.compute-1.amazonaws.com:5432/df8gpqtl7fqqdj
     username: qmqirgynylbcpo
     password: 38fc0b6abad6b6b1394dadf3f883e56ef44b296ef54b0c7d67e640309a563dee
-  # JPA properties spring.jpa.hibernate.ddl-auto=update
+
   jpa:
     hibernate:
       ddl-auto: update # When you launch the application for the first time - switch "none" at "create"
@@ -55,23 +55,22 @@ logging:
     root: INFO
     org.springframework.web: ERROR
     org.hibernate: ERROR
-   
-#  Server configuration
-server:
-  port: 9090 
+
+# Eureka Client setting    
 eureka:
   instance:
     hostname: localhost
     serviceUrl:
       defaultZone : http://${eureka.instance.hostname}:8761/eureka/  
+      
 # CF UAA setting  
 #uaa:
 #  url: ${UAA_URI:http://localhost:8080/uaa}
 #  # Client ID on whose behalf the access_token will be verified by Resource Server
 #  clientId: uaa-ui-client
 #  clientSecret: secret
-# Keycloak setting
-
+     
+# Keycloak setting       
 keycloak:
 #  auth-server-url: ${UAA_URI:http://192.168.2.177:8080/auth/}
   auth-server-url: http://key-cloak.ddns.net:8080/auth/
@@ -82,3 +81,16 @@ keycloak:
   credentials : 
     secret : 6de31c9b-3acb-4ae0-a3d5-639bc72c5d29
     use-resource-role-mappings : true  
+
+# Open Feign Client setting
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 10000
+        loggerLevel: basic
+
+#  Server configuration
+server:
+  port: 9090 

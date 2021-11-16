@@ -12,9 +12,11 @@ package com.nexio.api.ms.rest;
  * @since   2021-11-05 
  */
 
-import com.nexio.api.ms.dto.OrderDTO;
-import com.nexio.api.ms.service.IOrderService;
-
+import com.nexio.api.ms.config.Constants;
+import com.nexio.api.ms.domain.Commande;
+import com.nexio.api.ms.service.IClientService;
+import com.nexio.api.ms.service.ICommandeDtoService;
+import com.nexio.api.ms.service.CommandeDtoServiceImpl;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,10 +27,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
 
@@ -44,18 +48,18 @@ import javax.validation.Valid;
 /**
  * REST controller for managing {@link com.nexio.api.ms.dto.OrderDTO}.
  */
-@RestController
-@RequestMapping("/api")
-@CrossOrigin(origins = "*")
-//@CrossOrigin(origins = "http://localhost:4200")
-@Api(value="Order management",tags="Order Microservice",description ="The main Microservice")
-public class OrderController {
+//@RestController
+//@RequestMapping("/api")
+//@CrossOrigin(origins = "*")
+////@CrossOrigin(origins = "http://localhost:4200")
+//@Api(value="Order management",tags="Order Microservice")
+public class CommandeController {
 
-    private final Logger log = LoggerFactory.getLogger(OrderController.class);
+    private final Logger log = LoggerFactory.getLogger(CommandeController.class);
  
-    private final IOrderService orderService;
+    private final ICommandeDtoService orderService;
     
-    public OrderController(IOrderService orderService) {
+    public CommandeController(ICommandeDtoService orderService) {
         this.orderService = orderService;
     }
 
@@ -68,11 +72,11 @@ public class OrderController {
      */
     @PostMapping("/orders")
     @ApiOperation(value = "Save a new Order")
-    public ResponseEntity<OrderDTO> createOrder(@Valid @RequestBody OrderDTO order) throws URISyntaxException {
+    public ResponseEntity<Commande> createOrder(@Valid @RequestBody Commande order) throws URISyntaxException {
         log.debug("REST request to save Order : {}", order);
 
-        OrderDTO result = orderService.save(order);
-        return ResponseEntity.created(new URI("/api/orders/" + result.getCommande().getId()))
+        Commande result = orderService.save(order);
+        return ResponseEntity.created(new URI("/api/orders/" + result.getId()))
             .body(result);
     }
 
@@ -87,9 +91,9 @@ public class OrderController {
      */
     @PutMapping("/orders")
     @ApiOperation(value = "Update an existed Order")
-    public ResponseEntity<OrderDTO> updateOrder(@Valid @RequestBody OrderDTO order) throws URISyntaxException {
+    public ResponseEntity<Commande> updateOrder(@Valid @RequestBody Commande order) throws URISyntaxException {
         log.debug("REST request to update Order : {}", order);
-        OrderDTO result = orderService.save(order);
+        Commande result = orderService.save(order);
         return ResponseEntity.ok()
             .body(result);
     }
@@ -102,16 +106,16 @@ public class OrderController {
      */
     @GetMapping("/orders")
     @ApiOperation(value = "Get all the orders - paginable")
-    public ResponseEntity<List<OrderDTO>> getAllOrders(Pageable pageable) {
+    public ResponseEntity<List<Commande>> getAllOrders(Pageable pageable) {
         log.debug("REST request to get a page of Orders");
-        Page<OrderDTO> page = orderService.findAll(pageable);
+        Page<Commande> page = orderService.findAll(pageable);
         return ResponseEntity.ok().body(page.getContent());
     }
     
     
     @GetMapping("/orders/all")
     @ApiOperation(value = "Get all the orders - list")
-    public  List<OrderDTO> getAllOrders() {
+    public  List<Commande> getAllOrders() {
         log.debug("REST request to get all Orders");
         return orderService.findAll();
     }
@@ -125,9 +129,9 @@ public class OrderController {
     
     @GetMapping("/orders/{id}")
     @ApiOperation(value = "Get Order by id")
-    public ResponseEntity<OrderDTO> getOrder(@PathVariable Long id) {
+    public ResponseEntity<Commande> getOrder(@PathVariable Long id) {
         log.debug("REST request to get Order : {}", id);
-        Optional<OrderDTO> order = orderService.findOne(id);
+        Optional<Commande> order = orderService.findOne(id);
         return ResponseEntity.ok().body(order.get());
     }
     

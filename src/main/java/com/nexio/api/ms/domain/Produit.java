@@ -29,7 +29,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@ApiModel(value="Produit",description="Produit est un bean non persistant, il appartient au deuxième MS,  il sert pour les lignes commandes")
+@ApiModel(value="Produit",description="Produit est un bean non persistant, il sert à être consommé à partir du deuxième Microsercice (https://nexio-stock-service.herokuapp.com/api/produits/)")
 public class Produit implements Serializable {
 
     private static final long serialVersionUID = 1L;

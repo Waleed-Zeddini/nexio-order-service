@@ -48,19 +48,19 @@ public class CommandeMapper {
             order.setEtat(orderDTO.getEtat());
             order.setClient(orderDTO.getClient());
             
-            Set<CarnetCommande> carnets = this.carnetCommandesFromLons(orderDTO.getCarnets());
-            order.setCarnets(carnets);
+            Set<LigneCommande> lignesCde = this.carnetCommandesFromLons(orderDTO.getCarnets());
+            order.setLigneCommandes(lignesCde);
             return order;
         }
     }
 
 
-    private Set<CarnetCommande> carnetCommandesFromLons(Set<Long> carnetCommandesAsLong) {
-        Set<CarnetCommande> carnetCommandes = new HashSet<>();
+    private Set<LigneCommande> carnetCommandesFromLons(Set<Long> carnetCommandesAsLong) {
+        Set<LigneCommande> carnetCommandes = new HashSet<>();
 
         if (carnetCommandesAsLong != null) {
         	carnetCommandes = carnetCommandesAsLong.stream().map(id -> {
-            	CarnetCommande auth = new CarnetCommande();
+            	LigneCommande auth = new LigneCommande();
                 auth.setId(id);
                 return auth;
             }).collect(Collectors.toSet());
