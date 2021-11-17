@@ -96,6 +96,16 @@ public class OrderServiceImpl implements IOrderService {
 				order.setCommande(commandeRepository.save(order.getCommande()));
 				
 				for (LigneCommande ligneCde : order.getLigneCommande()) {
+					if(ligneCde.getProduit()!=null) {
+						ligneCde.setProduitId(ligneCde.getProduit().getId());	
+					}
+					if(ligneCde.getEtat()==null) {
+						ligneCde.setEtat(new Long(0));	
+					}
+					if(ligneCde.getPrixUnitaire()==null) {
+						ligneCde.setPrixUnitaire(new BigDecimal(0));	
+					}
+					ligneCde.setCommandeId(order.getCommande().getId());
 					ligneCde.setCommande(order.getCommande());
 					ligneCde = ligneCommandeRepository.save(ligneCde);
 				}
