@@ -34,12 +34,12 @@ spring:
       connection-timeout: 60000
       maximum-pool-size: 30
     driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/ORDER_MS_DB
-#    username: zedgres
-#    password: zedgres
-    url: jdbc:postgresql://ec2-52-204-72-14.compute-1.amazonaws.com:5432/d713a095k5u92v
-    username: pqjthuntoftqnr
-    password: f46a560f837a27fca076c5e3e085f1adb1c0dc7a1fdd905b7ba21e13b0288733
+    url: jdbc:postgresql://localhost:5432/ORDER_MS_DB
+    username: zedgres
+    password: zedgres
+#    url: jdbc:postgresql://ec2-52-204-72-14.compute-1.amazonaws.com:5432/d713a095k5u92v
+#    username: pqjthuntoftqnr
+#    password: f46a560f837a27fca076c5e3e085f1adb1c0dc7a1fdd905b7ba21e13b0288733
 
   jpa:
     hibernate:

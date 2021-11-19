@@ -14,6 +14,7 @@ package com.nexio.api.ms.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +44,7 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
  * Queries (Methods) relating to the main Business Rules (search)
  */
 
+public Optional<Client> findFirstByOrderByNomAsc();
 
 public  Client findByGsmAndEmail(String gsm, String email);
 
@@ -82,6 +84,7 @@ public List<Client> findByEmailLike( String email);
 
 @Query("SELECT c FROM Client c WHERE c.ville = :town")
 public List<Client> findClientByVille(@Param("town") String villeClt);
+
  
 
 

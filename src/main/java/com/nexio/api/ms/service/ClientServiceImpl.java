@@ -94,4 +94,9 @@ public class ClientServiceImpl implements IClientService {
 	public List<Client> findAll() {
 		return clientRepository.findAll();
 	}
+
+	@Override
+	public Optional<Client> findFist() {
+		return clientRepository.findFirstByOrderByNomAsc();
+	}
 }

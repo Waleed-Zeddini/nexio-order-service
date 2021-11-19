@@ -121,6 +121,19 @@ public class ClientResource {
         return ResponseEntity.ok().body(client.get());
 
     }
+    
+    /**
+     * {@code GET  /clients/first} : get the "first" client.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the client, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/clients/first")
+    public ResponseEntity<Client> getFirstClient() {
+        log.debug("REST request to get Client : {}");
+        Optional<Client> client = clientService.findFist();
+        return ResponseEntity.ok().body(client.get());
+
+    }
 
     /**
      * {@code DELETE  /clients/:id} : delete the "id" client.

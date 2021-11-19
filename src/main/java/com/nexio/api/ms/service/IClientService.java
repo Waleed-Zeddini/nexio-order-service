@@ -34,5 +34,7 @@ public interface IClientService {
 	
 	void delete(Long id);
 
+	Optional<Client> findFist();
+
    
 }
