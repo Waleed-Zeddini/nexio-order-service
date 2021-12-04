@@ -48,7 +48,7 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 //@CrossOrigin(origins = "http://localhost:4200")
-@Api(value="Client management",tags="REST - Client",description ="Client Resource MSSS FAD")
+@Api(value="Client management",tags="REST - Client",description ="Client Resource MSS1 FAD")
 //@ApiIgnore
 public class ClientResource { 
 
